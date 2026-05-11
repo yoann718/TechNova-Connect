@@ -1,0 +1,28 @@
+# Local secrets and generated certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
+
+# Local environment overrides
+.env
+.env.*
+!.env.example
+
+# Runtime and editor noise
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python / tooling caches
+__pycache__/
+.pytest_cache/
+
+# Node / package caches if used locally
+node_modules/
+npm-debug.log*
