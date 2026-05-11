@@ -63,24 +63,6 @@ technova-connect-poc-automatisation/
 | Installation Jitsi Meet | `scripts/linux/03-install-jitsi.sh` |
 | Installation n8n optionnelle | `scripts/linux/04-install-n8n.sh` |
 
-## Avant publication ou déploiement
-
-Nom public recommandé :
-
-```text
-TechNova Connect — POC automatisation
-```
-
-Slug GitHub recommandé :
-
-```text
-technova-connect-poc-automatisation
-```
-
-Les fichiers du dossier `env/` contiennent des valeurs de démonstration. Avant un vrai déploiement, remplacer toutes les valeurs `CHANGE_ME...` par des mots de passe forts propres au lab.
-
-Ne jamais publier de clé privée, de certificat privé ou de fichier `.env` local. Le fichier `.gitignore` bloque les formats sensibles les plus courants.
-
 ## Validation
 
 La checklist de fin de POC est ici :
