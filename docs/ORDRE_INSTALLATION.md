@@ -207,6 +207,8 @@ Les scripts Linux utilisent les fichiers du dossier `env/`. Ils acceptent aussi 
 
 Installation scriptée :
 
+[Script d'installation Nextcloud](../scripts/linux/01-install-nextcloud.sh)
+
 ```bash
 chmod +x scripts/linux/01-install-nextcloud.sh
 ./scripts/linux/01-install-nextcloud.sh
@@ -220,6 +222,8 @@ Installation manuelle :
 
 Installation scriptée recommandée :
 
+[Script d'installation Rocket.Chat](../scripts/linux/02-install-rocketchat.sh)
+
 ```bash
 chmod +x scripts/linux/02-install-rocketchat.sh
 ./scripts/linux/02-install-rocketchat.sh
@@ -227,12 +231,13 @@ chmod +x scripts/linux/02-install-rocketchat.sh
 
 Procédures détaillées :
 
-- [Installation Rocket.Chat automatisée](procedures/04-installation-rocketchat-automatisee.md)
 - [Installation Rocket.Chat manuelle](procedures/05-installation-rocketchat-manuelle.md)
 
 ### 6.3 Jitsi Meet
 
 Installation scriptée :
+
+[Script d'installation Jitsi Meet](../scripts/linux/03-install-jitsi.sh)
 
 ```bash
 chmod +x scripts/linux/03-install-jitsi.sh
@@ -252,6 +257,8 @@ Après l'installation de Jitsi, appliquer la procédure d'authentification Activ
 n8n est optionnel pour ce projet. Il peut être installé si le POC doit démontrer des automatisations internes, mais il n'est pas nécessaire pour valider l'infrastructure AD, Nextcloud, Rocket.Chat et Jitsi.
 
 Installation scriptée, seulement si n8n est retenu :
+
+[Script d'installation n8n](../scripts/linux/04-install-n8n.sh)
 
 ```bash
 chmod +x scripts/linux/04-install-n8n.sh
