@@ -2,7 +2,7 @@
 
 ## Infrastructure
 
-- [ ] Les VM sont créées dans VMware Workstation,
+- [ ] Les VM sont créées dans VMware Workstation
 - [ ] Les VM sont sur le même réseau VMnet
 - [ ] Le réseau utilisé est `192.168.192.0/24`
 - [ ] La passerelle est `192.168.192.2`
