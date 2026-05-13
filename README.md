@@ -1,4 +1,4 @@
-# TechNova Connect — POC automatisation
+# TechNova Connect 
 
 Ce dépôt regroupe les scripts et procédures nécessaires pour déployer le POC local TechNova Connect.
 
