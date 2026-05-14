@@ -39,22 +39,61 @@ URL IP            : http://192.168.192.20:80
 
 ---
 
-## 2. Mettre à jour Debian
+## 2. Vérifier les prérequis avant installation
+
+Avant de lancer l’installation, vérifier que le serveur Debian est joignable et que sa configuration réseau correspond à l’architecture prévue.
+
+Vérifier l’adresse IP du serveur :
+
+```bash
+ip -br a
+```
+
+Vérifier l’accès Internet :
+
+```bash
+ping -c 4 deb.debian.org
+```
+
+Vérifier le nom DNS si l’enregistrement existe déjà :
+
+```bash
+getent hosts nextcloud.technova.local
+```
+
+Si le DNS n’est pas encore créé, ce n’est pas bloquant pour installer Nextcloud. L’accès pourra être testé directement avec l’adresse IP :
+
+```text
+http://192.168.192.20
+```
+
+---
+
+## 3. Mettre à jour Debian et installer les dépendances de base
+
+Mettre Debian à jour :
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-Installer les dépendances de base :
+Installer les dépendances de base en une fois :
 
 ```bash
-sudo apt install -y ca-certificates curl gnupg lsb-release
+sudo apt install -y ca-certificates curl gnupg lsb-release nano
+```
+
+Remarque :
+
+```text
+Les paquets Docker ne sont pas installés à cette étape.
+Ils seront installés après l’ajout de la clé officielle Docker et du dépôt Docker.
 ```
 
 ---
 
-## 3. Installer Docker et Docker Compose
+## 4. Installer Docker et Docker Compose
 
 Créer le dossier des clés APT :
 
@@ -99,7 +138,7 @@ docker compose version
 
 ---
 
-## 4. Ajouter l’utilisateur au groupe Docker
+## 5. Ajouter l’utilisateur au groupe Docker
 
 Remplacer `yoann` par le nom de l’utilisateur si besoin :
 
@@ -119,15 +158,51 @@ Après redémarrage, vérifier :
 docker ps
 ```
 
+Si la commande fonctionne sans `sudo`, l’utilisateur peut piloter Docker.
+
 ---
 
-## 5. Créer le dossier d’installation
+## 6. Préparer le dossier d’installation
 
 Créer le dossier Nextcloud :
 
 ```bash
 sudo mkdir -p /opt/nextcloud
 ```
+
+### Cas recommandé : exploitation avec un utilisateur Linux standard
+
+Si Docker Compose sera lancé avec un compte standard, donner les droits à ce compte.
+
+Exemple avec l’utilisateur `yoann` :
+
+```bash
+sudo chown -R yoann:yoann /opt/nextcloud
+cd /opt/nextcloud
+```
+
+### Cas possible : exploitation depuis un shell root
+
+Si vous êtes déjà dans un shell root et que l’exploitation sera faite en root, le dossier peut appartenir à `root:root`.
+
+Ce n’est pas forcément bloquant dans ce cas précis, car les fichiers `compose.yml` et `.env` sont lus par Docker Compose. Le propriétaire devient surtout important si un autre utilisateur doit modifier ces fichiers ou relancer l’application.
+
+Commandes possibles en root :
+
+```bash
+mkdir -p /opt/nextcloud
+cd /opt/nextcloud
+```
+
+Si vous êtes déjà dans un shell root mais que le dossier doit être géré par un autre compte, remplacer `tonuser` par le vrai compte Linux ou domaine qui doit gérer les fichiers :
+
+```bash
+mkdir -p /opt/nextcloud
+chown -R tonuser:tonuser /opt/nextcloud
+cd /opt/nextcloud
+```
+
+### Variante avec UID/GID du compte courant
 
 Donner les droits au compte Linux actuellement connecté :
 
@@ -145,6 +220,14 @@ Pourquoi utiliser `$(id -u):$(id -g)` plutôt que `$USER:$USER` :
 - l’UID et le GID numériques retournés par id sont ceux réellement utilisés par Linux pour les droits fichiers.
 ```
 
+Attention :
+
+```text
+Si la session courante est root, $(id -u):$(id -g) donnera 0:0.
+Le dossier appartiendra donc à root:root.
+Ce n’est pas automatiquement un problème, mais il faut que ce soit volontaire.
+```
+
 Vérifier le compte et le groupe utilisés :
 
 ```bash
@@ -155,20 +238,19 @@ ls -ld /opt/nextcloud
 Résultat attendu :
 
 ```text
-/opt/nextcloud appartient à l’utilisateur courant, pas à root.
+/opt/nextcloud appartient au compte qui doit administrer les fichiers Docker Compose.
+Ce compte peut être un utilisateur standard ou root si l’exploitation est volontairement faite en root.
 ```
 
-Si vous êtes déjà dans un shell root, remplacez `tonuser` par le vrai compte Linux ou domaine qui doit gérer les fichiers :
+Résultat attendu si vous avez choisi un utilisateur standard :
 
-```bash
-mkdir -p /opt/nextcloud
-chown -R tonuser:tonuser /opt/nextcloud
-cd /opt/nextcloud
+```text
+/opt/nextcloud appartient à l’utilisateur courant, pas à root.
 ```
 
 ---
 
-## 6. Créer le fichier `.env`
+## 7. Créer le fichier `.env`
 
 Créer le fichier :
 
@@ -208,7 +290,7 @@ CTRL + X
 
 ---
 
-## 7. Créer le fichier `compose.yml`
+## 8. Créer le fichier `compose.yml`
 
 Dans `/opt/nextcloud` :
 
@@ -274,7 +356,7 @@ volumes:
 
 ---
 
-## 8. Démarrer Nextcloud
+## 9. Démarrer Nextcloud
 
 Depuis `/opt/nextcloud` :
 
@@ -299,7 +381,7 @@ nextcloud-redis
 
 ---
 
-## 9. Vérifier l’initialisation Nextcloud
+## 10. Vérifier l’initialisation Nextcloud
 
 Vérifier que les fichiers Nextcloud sont présents :
 
@@ -327,7 +409,7 @@ docker compose logs -f app
 
 ---
 
-## 10. Accéder à Nextcloud
+## 11. Accéder à Nextcloud
 
 Depuis un navigateur :
 
@@ -348,9 +430,11 @@ Utilisateur : admin
 Mot de passe : CHANGE_ME_NEXTCLOUD_ADMIN_PASSWORD
 ```
 
+Si le nom DNS ne répond pas, tester d’abord l’accès par IP. Si l’accès par IP fonctionne mais pas par nom DNS, le problème vient probablement de la résolution DNS et non de Nextcloud.
+
 ---
 
-## 11. Commandes utiles
+## 12. Commandes utiles
 
 Voir les conteneurs :
 
@@ -402,7 +486,7 @@ docker exec -u www-data -it nextcloud php occ status
 
 ---
 
-## 12. Réinitialiser le POC
+## 13. Réinitialiser le POC
 
 Attention : cette commande supprime les données Nextcloud, MariaDB et Redis.
 
@@ -414,7 +498,7 @@ docker compose up -d
 
 ---
 
-## 13. Résultat attendu
+## 14. Résultat attendu
 
 ```text
 Nextcloud est installé sur Debian 13 avec Docker Compose.
