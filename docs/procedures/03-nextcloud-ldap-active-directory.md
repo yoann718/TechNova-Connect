@@ -1,6 +1,62 @@
 # Procédure graphique — Joindre Nextcloud à l’Active Directory via LDAP
 
-## 1. Accéder à l’intégration LDAP/AD
+## 1. Activer l’application LDAP si elle n’est pas présente
+
+Avant de configurer l’intégration Active Directory, vérifier que l’application LDAP est activée dans Nextcloud.
+
+Si le menu **LDAP/AD integration** n’apparaît pas, activer l’application LDAP depuis l’interface graphique.
+
+Chemin dans Nextcloud :
+
+```text
+Avatar administrateur en haut à droite
+→ Applications
+→ Applications désactivées
+→ LDAP user and group backend
+→ Activer
+```
+
+Selon la version ou la traduction de Nextcloud, le chemin peut apparaître ainsi :
+
+```text
+Avatar administrateur en haut à droite
+→ Apps
+→ Disabled apps
+→ LDAP user and group backend
+→ Enable
+```
+
+Après activation, revenir dans :
+
+```text
+Paramètres d’administration
+→ Administration
+→ LDAP/AD integration
+```
+
+Si l’activation graphique n’est pas possible, activer le module en ligne de commande depuis le serveur Nextcloud :
+
+```bash
+cd /opt/nextcloud
+docker exec -u www-data -it nextcloud php occ app:enable user_ldap
+```
+
+Vérifier que l’application LDAP est bien activée :
+
+```bash
+cd /opt/nextcloud
+docker exec -u www-data -it nextcloud php occ app:list | grep -i ldap
+```
+
+Résultat attendu :
+
+```text
+user_ldap
+```
+
+---
+
+## 2. Accéder à l’intégration LDAP/AD
 
 Se connecter à Nextcloud avec un compte administrateur.
 
@@ -20,7 +76,7 @@ s01: 192.168.192.10
 
 ---
 
-## 2. Onglet Serveur
+## 3. Onglet Serveur
 
 Dans l’onglet **Serveur**, renseigner :
 
@@ -55,9 +111,17 @@ Le DN de base est valide.
 Nextcloud peut contacter le serveur LDAP/AD.
 ```
 
+Important :
+
+```text
+À ce stade, le test de connexion au serveur LDAP/AD peut être valide.
+En revanche, les tests utilisateur ne fonctionneront pas correctement tant que l’onglet Attributs de connexion n’aura pas été paramétré.
+Il faut donc continuer la procédure jusqu’à l’onglet Attributs de connexion avant de conclure qu’un utilisateur AD est introuvable.
+```
+
 ---
 
-## 3. Onglet Utilisateurs
+## 4. Onglet Utilisateurs
 
 Aller dans l’onglet **Utilisateurs**.
 
@@ -113,7 +177,7 @@ Nextcloud trouve les utilisateurs Active Directory correspondant au filtre.
 
 ---
 
-## 4. Onglet Attributs de connexion
+## 5. Onglet Attributs de connexion
 
 Aller dans l’onglet **Attributs de connexion**.
 
@@ -169,7 +233,7 @@ Nextcloud trouve l’utilisateur AD correspondant au login testé.
 
 ---
 
-## 5. Onglet Groupes
+## 6. Onglet Groupes
 
 Aller dans l’onglet **Groupes**.
 
@@ -235,7 +299,7 @@ Nextcloud trouve uniquement les groupes AD sélectionnés.
 
 ---
 
-## 6. Onglet Avancé — Paramètres du dossier
+## 7. Onglet Avancé — Paramètres du dossier
 
 Aller dans l’onglet **Avancé**.
 
@@ -332,7 +396,7 @@ Tester la configuration
 
 ---
 
-## 7. Validation finale
+## 8. Validation finale
 
 Une fois tous les onglets configurés, cliquer sur :
 
@@ -351,7 +415,7 @@ Les groupes AD sélectionnés peuvent être remontés.
 
 ---
 
-## 8. Test de connexion utilisateur
+## 9. Test de connexion utilisateur
 
 Depuis la page de connexion Nextcloud :
 
@@ -376,7 +440,7 @@ L’authentification utilise bien l’Active Directory.
 
 ---
 
-## 9. Résultat obtenu
+## 10. Résultat obtenu
 
 ```text
 Nextcloud est relié à l’Active Directory technova.local via LDAP.
