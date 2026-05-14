@@ -123,9 +123,46 @@ docker ps
 
 ## 5. Créer le dossier d’installation
 
+Créer le dossier Nextcloud :
+
 ```bash
 sudo mkdir -p /opt/nextcloud
-sudo chown -R $USER:$USER /opt/nextcloud
+```
+
+Donner les droits au compte Linux actuellement connecté :
+
+```bash
+sudo chown -R $(id -u):$(id -g) /opt/nextcloud
+cd /opt/nextcloud
+```
+
+Pourquoi utiliser `$(id -u):$(id -g)` plutôt que `$USER:$USER` :
+
+```text
+- $USER peut ne pas valoir root selon la manière dont la session sudo ou root a été ouverte.
+- avec un compte administrateur de domaine, le nom peut être différent du nom local attendu par Linux.
+- certains comptes de domaine contiennent des caractères moins pratiques à utiliser avec chown.
+- l’UID et le GID numériques retournés par id sont ceux réellement utilisés par Linux pour les droits fichiers.
+```
+
+Vérifier le compte et le groupe utilisés :
+
+```bash
+id
+ls -ld /opt/nextcloud
+```
+
+Résultat attendu :
+
+```text
+/opt/nextcloud appartient à l’utilisateur courant, pas à root.
+```
+
+Si vous êtes déjà dans un shell root, remplacez `tonuser` par le vrai compte Linux ou domaine qui doit gérer les fichiers :
+
+```bash
+mkdir -p /opt/nextcloud
+chown -R tonuser:tonuser /opt/nextcloud
 cd /opt/nextcloud
 ```
 
